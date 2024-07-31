@@ -6,34 +6,30 @@ The graph is represented by an adjacency matrix. Arcs are represented by the val
 Conflict-free Sets
 
 First, we look for conflict-free sets among all combinations of nodes. We eliminate all combinations such that:
-
-    There exists at least one case where: i and j belong to this combination and M[i][j] = 1.
+There exists at least one case where: i and j belong to this combination and M[i][j] = 1.
 
 # Admissible Sets
 
 Next, we find all sets that defend themselves against their attackers among the remaining combinations. For each set, we verify:
-
-    For each node j in the set to be verified, for each node i in the graph, if i attacks j (i.e., M[i][j] = 1):
-        We check for each node k in the set if M[k][i] = 1. It is sufficient for i to be attacked once by an element of the set to satisfy this condition.
+For each node j in the set to be verified, for each node i in the graph, if i attacks j (i.e., M[i][j] = 1):
+We check for each node k in the set if M[k][i] = 1. It is sufficient for i to be attacked once by an element of the set to satisfy this condition.
 
 # Complete Extensions
 
-    A function checks if a node entered as a parameter is defended by a node from a given set, as described previously.
-    In a second function, we call the first function for each node in the graph: if the node is defended against all its attackers by the set without belonging to it, then we reject this set.
-    We can then call the second function for each combination. This allows us to determine if the combination of nodes is a complete extension.
+A function checks if a node entered as a parameter is defended by a node from a given set, as described previously.
+In a second function, we call the first function for each node in the graph: if the node is defended against all its attackers by the set without belonging to it, then we reject this set.
+We can then call the second function for each combination. This allows us to determine if the combination of nodes is a complete extension.
 
 # Stable Extensions
 
 We define a function to check if a list passed as a parameter (complete extension) attacks all nodes outside this list:
-
-    For each node in the graph, if it is not in the list, we check if it is attacked by at least one node from the list. If this is the case, the function returns True. If there is even a single node not attacked by the set, we exit the loop and reject this set.
+For each node in the graph, if it is not in the list, we check if it is attacked by at least one node from the list. If this is the case, the function returns True. If there is even a single node not attacked by the set, we exit the loop and reject this set.
 
 # DC-ST / DC-CO
 
 To determine if an argument is credulously accepted:
-
-    We iterate through the list of combinations, applying the previously defined functions to check if a set is admissible and a complete extension (for stable extensions, we also call the associated function).
-    We then check if the argument is in the extension. If it is, we return YES; otherwise, we continue to iterate through the sets.
+We iterate through the list of combinations, applying the previously defined functions to check if a set is admissible and a complete extension (for stable extensions, we also call the associated function).
+We then check if the argument is in the extension. If it is, we return YES; otherwise, we continue to iterate through the sets.
 
 # SE-ST
 
@@ -41,11 +37,10 @@ To find a stable extension, the function is similar to the one described above, 
 # SE-CO
 
 For the SE-CO option, we calculate the grounded extension:
-
-    First, we get the list of all nodes that are not attacked (i.e., all nodes for which the sum of the elements in the corresponding column in the matrix is 0).
-    We iterate through this list and reject all attacked nodes.
-    We then add all nodes that are not attacked (and not rejected) to the list of accepted elements.
-    We repeat these operations until the length of the list of accepted elements no longer changes.
+First, we get the list of all nodes that are not attacked (i.e., all nodes for which the sum of the elements in the corresponding column in the matrix is 0).
+We iterate through this list and reject all attacked nodes.
+We then add all nodes that are not attacked (and not rejected) to the list of accepted elements.
+We repeat these operations until the length of the list of accepted elements no longer changes.
 
 # DS-CO
 
