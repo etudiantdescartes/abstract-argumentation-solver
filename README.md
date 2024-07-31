@@ -1,64 +1,55 @@
-# Solveur de système d'argumentation abstrait
-L'objectif est de trouver diverses structures dans un système d'argumentation abstrait sous forme de graphe.
+# Abstract Argumentation Framework Solver
 
-Le graphe est représenté par une matrice d’adjacence. Les arcs sont représentés par la valeur 1 dans la
-matrice, le reste est à 0. Donc pour une matrice M, si M[i,j] = 1, le nœud i attaque le nœud j.
+The objective is to find various structures in an abstract argumentation framework represented as a graph.
 
-# Ensembles conflict-free
-On cherche d’abord les ensembles sans conflit interne parmi toutes les combinaisons de nœuds. On
-supprime donc toutes les combinaisons telles que :
-- On a au moins une fois le cas : i et j appartiennent à cette combinaison et M[i][j] = 1
+The graph is represented by an adjacency matrix. Arcs are represented by the value 1 in the matrix, and the rest is 0. So for a matrix M, if M[i,j] = 1, node i attacks node j.
+Conflict-free Sets
 
-# Ensembles admissibles
-On cherche ensuite tous les ensembles qui se défendent de leurs attaquants parmi les combinaisons
-restantes. On vérifie donc pour chaque ensemble :
-- Pour chaque nœud j de l’ensemble à vérifier, pour chaque nœud i du graphe, si i attaque j c’est-
-à-dire M[i][j] = 1
+First, we look for conflict-free sets among all combinations of nodes. We eliminate all combinations such that:
 
-  - On vérifie pour chaque nœud k de l’ensemble si M[k][i] = 1. Il suffit que i soit attaqué
-  une seule fois par un élément de l’ensemble pour vérifier cette condition.
+    There exists at least one case where: i and j belong to this combination and M[i][j] = 1.
 
-# Extensions complètes
-- Une fonction vérifie si un nœud entré en paramètre est
-défendu par un nœud d’un ensemble donné en paramètre, de la même manière que décrit
-précédemment.
-- Dans une seconde fonction, on appelle la première fonction pour chaque nœud du graphe : si le
-nœud est défendu de tous ses attaquants par l’ensemble sans y appartenir, alors on rejette cet
-ensemble.
-- On peut ensuite appeler la seconde fonction pour chaque combinaison. Ce qui permet de savoir
-si la combinaison de nœuds est une extension complète.
+# Admissible Sets
 
-# Extensions stables
-On définit une fonction permettant de vérifier si une liste passée en paramètre (extensions
-complète) attaque tous les nœuds en dehors de cette liste :
-- Pour chaque nœud du graphe, s’il n’est pas dans la liste, on vérifie s’il est attaqué par au moins
-un nœud de la liste. Si c’est le cas la fonction renvoie True. Il suffit qu’il y ait un seul nœud qui ne
-soit pas attaqué par l’ensemble pour sortir de la boucle et rejeter cet ensemble.
+Next, we find all sets that defend themselves against their attackers among the remaining combinations. For each set, we verify:
+
+    For each node j in the set to be verified, for each node i in the graph, if i attacks j (i.e., M[i][j] = 1):
+        We check for each node k in the set if M[k][i] = 1. It is sufficient for i to be attacked once by an element of the set to satisfy this condition.
+
+# Complete Extensions
+
+    A function checks if a node entered as a parameter is defended by a node from a given set, as described previously.
+    In a second function, we call the first function for each node in the graph: if the node is defended against all its attackers by the set without belonging to it, then we reject this set.
+    We can then call the second function for each combination. This allows us to determine if the combination of nodes is a complete extension.
+
+# Stable Extensions
+
+We define a function to check if a list passed as a parameter (complete extension) attacks all nodes outside this list:
+
+    For each node in the graph, if it is not in the list, we check if it is attacked by at least one node from the list. If this is the case, the function returns True. If there is even a single node not attacked by the set, we exit the loop and reject this set.
 
 # DC-ST / DC-CO
-Pour savoir si un argument est crédulement accepté :
-- On parcourt la liste des combinaisons en appliquant les fonctions définies précédemment pour
-savoir si un ensemble est admissible et une extension complète (dans le cas des extensions
-stables, on appelle en plus la fonction associée).
-- On regarde ensuite si l’argument est dans l’extension. Si c’est le cas on renvoie YES, sinon, on
-continue à parcourir les ensembles.
+
+To determine if an argument is credulously accepted:
+
+    We iterate through the list of combinations, applying the previously defined functions to check if a set is admissible and a complete extension (for stable extensions, we also call the associated function).
+    We then check if the argument is in the extension. If it is, we return YES; otherwise, we continue to iterate through the sets.
+
 # SE-ST
-Pour trouver une extension stable, la fonction est similaire à celle décrite précédemment, sans la
-vérification de la présence d’un argument dans l’extension.
+
+To find a stable extension, the function is similar to the one described above, without checking for the presence of an argument in the extension.
 # SE-CO
-Pour l’option SE-CO on calcule l’extension grounded :
-- On récupère d’abord la liste de tous les nœuds qui ne sont pas attaqués (donc tous les nœuds
-dont la somme des éléments de la colonne correspondante dans la matrice est 0).
-- On parcourt cette liste et on rejette tous les nœuds attaqués.
-- On ajoute ensuite tous les nœuds qui ne sont pas attaqués (et non rejetés) dans la liste des
-élément acceptés.
-- On répète ces opérations jusqu’à ce que la longueur de la liste des éléments acceptés ne change
-plus.
+
+For the SE-CO option, we calculate the grounded extension:
+
+    First, we get the list of all nodes that are not attacked (i.e., all nodes for which the sum of the elements in the corresponding column in the matrix is 0).
+    We iterate through this list and reject all attacked nodes.
+    We then add all nodes that are not attacked (and not rejected) to the list of accepted elements.
+    We repeat these operations until the length of the list of accepted elements no longer changes.
+
 # DS-CO
-On regarde d’abord si l’extension grounded est vide : si c’est le cas, on retourne ‘NO’. Sinon, comme
-pour les algorithmes utilisés pour DC-ST et DC-CO, on récupère les extensions complètes parmi les
-combinaisons de nœuds, si on trouve une extension complète dans laquelle l’argument ne se trouve
-pas, on retourne ‘NO’. On retourne ‘YES’ à la fin de la fonction.
+
+First, we check if the grounded extension is empty: if so, we return ‘NO’. Otherwise, as with the algorithms used for DC-ST and DC-CO, we retrieve the complete extensions among the combinations of nodes. If we find a complete extension in which the argument is not present, we return ‘NO’. We return ‘YES’ at the end of the function.
 # DS-ST
-Le principe est le même, en vérifiant si les extensions sont stables. De plus, si on ne trouve pas
-d’extension stable, et que l’argument fait bien partie du graphe, on retourne ‘YES’.
+
+The principle is the same, verifying if the extensions are stable. Moreover, if we do not find a stable extension, and the argument is indeed part of the graph, we return ‘YES’.
